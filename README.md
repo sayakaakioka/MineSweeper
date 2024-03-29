@@ -43,7 +43,7 @@ void draw() {
 ## オートプレイを作るには…
 
 Sweeper タブの中の`decide()`をいじりましょう
-（上で`decide()`や``delay(1000)`をコメントアウトした場合には、
+（上で`decide()`や`delay(1000)`をコメントアウトした場合には、
 元に戻すのを忘れずに！）。
 サンプルはデタラメな動きになっているので、ぜひ工夫して賢くしてください。
 
@@ -94,9 +94,9 @@ void decide() {
 - `bombs`: 爆弾の総数です。
 - `mineSweeper.isGameCleared()`: ゲームがクリア済ならば`true`、それ以外で`false`を返します。
 - `mineSweeper.isGameOver()`: ゲームオーバーしていたら`true`、それ以外では`false`を返します。
-- `mineSweeper.isMarked(r, c)`: 上から`r`番目、左から`l`番目のマスに旗が立っていれば`true`、それ以外では`false`を返します。`r`や`l`は`0`から始まることに注意。
-- `mineSweeper.isOpen(r, c)`: 上から`r`番目、左から`l`番目のマスが開いていれば`true`、それ以外では`false`を返します。`r`や`l`は`0`から始まることに注意。
+- `mineSweeper.isMarked(r, c)`: 上から`r`番目、左から`c`番目のマスに旗が立っていれば`true`、それ以外では`false`を返します。`r`や`c`は`0`から始まることに注意。
+- `mineSweeper.isOpen(r, c)`: 上から`r`番目、左から`c`番目のマスが開いていれば`true`、それ以外では`false`を返します。`r`や`c`は`0`から始まることに注意。
 - `mineSweeper.leftOpen()`: まだ開いていない空きマスの数を返します。
-- `mineSweeper.markByIndex(r, c)`: 上から`r`番目、左から`l`番目のマスに旗を立てます。既に旗が立っている場合には、旗を外します。`r`や`l`は`0`から始まることに注意。
+- `mineSweeper.markByIndex(r, c)`: 上から`r`番目、左から`c`番目のマスに旗を立てます。既に旗が立っている場合には、旗を外します。`r`や`c`は`0`から始まることに注意。
 - `mineSweeper.marked()`: 立てた旗の数を返します。
-- `mineSweeper.openByIndex(r, c)`: 上から`r`番目、左から`l`番目のマスを開けます。既に旗が立っている場合には、開けられません。`r`や`l`は`0`から始まることに注意。
+- `mineSweeper.openByIndex(r, c)`: 上から`r`番目、左から`c`番目のマスを開けます。既に旗が立っている場合には、開けられません。`r`や`c`は`0`から始まることに注意。
