@@ -13,7 +13,8 @@ public enum BombInfo {
     FIVE(5),
     SIX(6),
     SEVEN(7),
-    EIGHT(8);
+    EIGHT(8),
+    UNKNOWN(9);
 
   private final int id;
 
@@ -24,7 +25,7 @@ public enum BombInfo {
   /*
    * 整数値でidを返す。
    */
-  public int getId() {
+  public int id() {
     return this.id;
   }
 
@@ -33,7 +34,7 @@ public enum BombInfo {
    */
    public static BombInfo getById(final int id){
      for(BombInfo info: BombInfo.values()){
-       if(info.getId() == id){
+       if(info.id() == id){
          return info;
        }
      }
