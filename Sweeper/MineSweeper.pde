@@ -361,7 +361,7 @@ class MineSweeper {
       // まだ爆弾を設置していないマスならば…
       if (neighbors[randomX][randomY] != BombInfo.TRAPPED) {
         // 最初にクリックしたマスは回避
-        if (randomX != r && randomY != c) {
+        if (randomX != r || randomY != c) {
           neighbors[randomX][randomY] = BombInfo.TRAPPED;
           counter++;
         }
