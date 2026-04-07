@@ -73,10 +73,7 @@ class MineSweeper {
    * ゲームクリア済みかどうかを返す
    */
   public boolean isGameCleared() {
-    if (counterOpenLeft == 0) {
-      return true;
-    }
-    return false;
+    return counterOpenLeft == 0;
   }
 
   /**
@@ -90,54 +87,24 @@ class MineSweeper {
    * 指定したマスが最後にクリックしたマスならばtrueを返す
    */
    public boolean isLastClicked(int r, int c){
-     if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("isLastClicked(): 第一引数の値が範囲外です。");
-    }
-
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("isLastClicked(): 第二引数の値が範囲外です。");
-    }
-    
-     if(r+1 == lastClickedR && c+1 == lastClickedC){
-       return true;
-     }
-     return false;
+    validateCell("isLastClicked()", r, c);
+    return toInnerRow(r) == lastClickedR && toInnerCol(c) == lastClickedC;
    }
 
   /**
    * 指定したマスに旗が立っているかどうかを返す。
    */
   public boolean isMarked(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("isMarked(): 第一引数の値が範囲外です。");
-    }
-
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("isMarked(): 第二引数の値が範囲外です。");
-    }
-
-    if (status[r+1][c+1] == Status.MARKED) {
-      return true;
-    }
-    return false;
+    validateCell("isMarked()", r, c);
+    return status[toInnerRow(r)][toInnerCol(c)] == Status.MARKED;
   }
 
   /**
    * 指定されたマスが開いているかどうかを返す。
    */
   public boolean isOpen(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("isOpen(): 第一引数の値が範囲外です。");
-    }
-
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("isOpen(): 第二引数の値が範囲外です。");
-    }
-
-    if (status[r+1][c+1] == Status.OPENED) {
-      return true;
-    }
-    return false;
+    validateCell("isOpen()", r, c);
+    return status[toInnerRow(r)][toInnerCol(c)] == Status.OPENED;
   }
 
   /**
@@ -151,19 +118,16 @@ class MineSweeper {
    * 指定したマスに旗を立てる。
    */
   public void mark(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("mark(): 第一引数の値が範囲外です。");
-    }
+    validateCell("mark()", r, c);
 
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("mark(): 第二引数の値が範囲外です。");
-    }
+    int innerR = toInnerRow(r);
+    int innerC = toInnerCol(c);
 
-    if (status[r+1][c+1] != Status.MARKED) {
-      status[r+1][c+1] = Status.MARKED;
+    if (status[innerR][innerC] != Status.MARKED) {
+      status[innerR][innerC] = Status.MARKED;
       counterMarked++;
     } else {
-      status[r+1][c+1] = Status.CLOSED;
+      status[innerR][innerC] = Status.CLOSED;
       counterMarked--;
     }
   }
@@ -179,16 +143,13 @@ class MineSweeper {
    * 指定したマスの爆弾情報を返す
    */
   public BombInfo neighbors(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("neighbors(): 第一引数の値が範囲外です。");
-    }
+    validateCell("neighbors()", r, c);
 
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("neighbors(): 第二引数の値が範囲外です。");
-    }
+    int innerR = toInnerRow(r);
+    int innerC = toInnerCol(c);
     
-    if(status[r+1][c+1] == Status.OPENED){
-      return neighbors[r+1][c+1];
+    if (status[innerR][innerC] == Status.OPENED) {
+      return neighbors[innerR][innerC];
     }
     
     return BombInfo.UNKNOWN;
@@ -198,59 +159,40 @@ class MineSweeper {
    * 指定したマスを開ける。
    * 開けたマスが、周囲8マスが爆弾なしの場合には、これらも開ける。
    */
-  public void open(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("open(): 第一引数の値が範囲外です。");
-    }
-
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("open(): 第二引数の値が範囲外です。");
-    }
+  public void openCell(int r, int c) {
+    validateCell("openCell()", r, c);
+    int innerR = toInnerRow(r);
+    int innerC = toInnerCol(c);
 
     // 初回クリックの場合には、このマスを避けて爆弾を配置する。
     if (firstTime) {
-      placeBombs(r+1, c+1);
-      initNeighbors();
-      firstTime = false;
+      initializeBoardOnFirstOpen(innerR, innerC);
     }
 
     // 旗が立っているマスは開けない。
-    if (status[r+1][c+1] == Status.MARKED) {
+    if (status[innerR][innerC] == Status.MARKED) {
       return;
     }
 
     // 爆弾があるマスを開けたらゲームオーバー。
-    if (neighbors[r+1][c+1] == BombInfo.TRAPPED) {
-      lastClickedR = r+1;
-      lastClickedC = c+1;
+    if (neighbors[innerR][innerC] == BombInfo.TRAPPED) {
+      lastClickedR = innerR;
+      lastClickedC = innerC;
       gameOver = true;
-      
-      // 全てのマスを開ける
-      for(int i=1;  i<status.length-1; i++){
-        for(int j=1; j<status[0].length-1; j++){
-          status[i][j] = Status.OPENED;
-        }
-      }
+      revealAllCells();
       return;
     }
 
     // 周囲に開けるべきマスがあれば開ける。
-    openAvailable(r+1, c+1);
+    openAvailable(innerR, innerC);
   }
 
   /**
    * 指定されたマスの状態を返す
    */
   public Status status(int r, int c) {
-    if (r+1<1 || r+1>status.length-2) {
-      throw new IllegalArgumentException("status(): 第一引数の値が範囲外です。");
-    }
-
-    if (c+1<1 || c+1>status[0].length-2) {
-      throw new IllegalArgumentException("status(): 第二引数の値が範囲外です。");
-    }
-    
-    return status[r+1][c+1];
+    validateCell("status()", r, c);
+    return status[toInnerRow(r)][toInnerCol(c)];
   }
 
   // 周囲8セルに含まれる爆弾の数を計算する。
@@ -321,7 +263,7 @@ class MineSweeper {
       return;
     }
 
-    openCell(r, c);
+    openInnerCell(r, c);
     if (neighbors[r][c].id()>0) {
       return;
     }
@@ -339,13 +281,50 @@ class MineSweeper {
   /**
    * 指定したマスをオープンの状態にする。
    */
-  private void openCell(int r, int c) {
+  private void openInnerCell(int r, int c) {
     if (status[r][c] == Status.OPENED) {
       return;
     }
 
     status[r][c] = Status.OPENED;
     counterOpenLeft--;
+  }
+
+  // メソッドの引数として受け取る座標が盤面内かどうかを確認する。
+  private void validateCell(String methodName, int r, int c) {
+    if (r < 0 || r >= rows) {
+      throw new IllegalArgumentException(methodName + ": 第一引数の値が範囲外です。");
+    }
+
+    if (c < 0 || c >= columns) {
+      throw new IllegalArgumentException(methodName + ": 第二引数の値が範囲外です。");
+    }
+  }
+
+  // 番兵付き配列で扱う内部座標に変換する。
+  private int toInnerRow(int r) {
+    return r + 1;
+  }
+
+  // 番兵付き配列で扱う内部座標に変換する。
+  private int toInnerCol(int c) {
+    return c + 1;
+  }
+
+  // 最初のオープン時に盤面を初期化する。
+  private void initializeBoardOnFirstOpen(int r, int c) {
+    placeBombs(r, c);
+    initNeighbors();
+    firstTime = false;
+  }
+
+  // ゲームオーバー時に全てのマスを開く。
+  private void revealAllCells() {
+    for (int i=1; i<status.length-1; i++) {
+      for (int j=1; j<status[0].length-1; j++) {
+        status[i][j] = Status.OPENED;
+      }
+    }
   }
 
   // 爆弾を設置する。1番最初にクリックされたマスには置かない。

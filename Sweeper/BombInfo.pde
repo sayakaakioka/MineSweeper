@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 /**
  * 爆弾の有無や周囲8マスの爆弾の数の表現用。
  */
@@ -32,13 +30,13 @@ public enum BombInfo {
   /*
    * コード値からの逆引き
    */
-   public static BombInfo getById(final int id){
-     for(BombInfo info: BombInfo.values()){
-       if(info.id() == id){
-         return info;
-       }
-     }
-     
-     return null;
-   }
+  public static BombInfo getById(final int id) {
+    for (BombInfo info: BombInfo.values()) {
+      if (info.id() == id) {
+        return info;
+      }
+    }
+
+    return null;
+  }
 }

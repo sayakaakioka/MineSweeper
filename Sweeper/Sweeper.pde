@@ -53,7 +53,7 @@ void draw() {
 void mousePressed() {
   if (mouseButton == LEFT) {
     // 左クリックならば、そこのマス目をオープン。
-    drawer.open(mouseX, mouseY);
+    drawer.openCell(mouseX, mouseY);
   } else if (mouseButton == RIGHT) {
     // 右クリックならば、そこのマス目に旗を立てる。
     // 既に旗が立っていれば、旗を消す。
@@ -66,6 +66,9 @@ int lastClickedR = -1;
 int lastClickedC = -1;
 
 // オートプレイの挙動を決める。
+// 授業では、この関数を全て消して自分なりの攻略プログラムに
+// 書き換えることを想定している。
+// setup() や draw() を壊してしまいそうな時は、まずこの関数だけを編集する。
 void decide() {
   // 先ほど開けたマスの周囲8マスの爆弾の数が3未満ならば
   // 近隣のマスを開ける
@@ -73,22 +76,22 @@ void decide() {
     if (lastClickedR-1>=0 && !mineSweeper.isOpen(lastClickedR-1, lastClickedC)) {
       // 上が開けられるので上を開ける
       lastClickedR--;
-      mineSweeper.open(lastClickedR, lastClickedC);
+      mineSweeper.openCell(lastClickedR, lastClickedC);
       return;
     } else if (lastClickedR+1<ROWS && !mineSweeper.isOpen(lastClickedR+1, lastClickedC)) {
       // 下が開けられるので下を開ける
       lastClickedR++;
-      mineSweeper.open(lastClickedR, lastClickedC);
+      mineSweeper.openCell(lastClickedR, lastClickedC);
       return;
     } else if (lastClickedC-1>=0 && !mineSweeper.isOpen(lastClickedR, lastClickedC-1)) {
       // 左が開けられるので左を開ける
       lastClickedC--;
-      mineSweeper.open(lastClickedR, lastClickedC);
+      mineSweeper.openCell(lastClickedR, lastClickedC);
       return;
     } else if (lastClickedC+1<COLUMNS && !mineSweeper.isOpen(lastClickedR, lastClickedC+1)) {
       // 右が開けられるので右を開ける
       lastClickedC++;
-      mineSweeper.open(lastClickedR, lastClickedC);
+      mineSweeper.openCell(lastClickedR, lastClickedC);
       return;
     }
     // 近隣に開けられるマスがなかったので以下でランダムに開ける
@@ -106,11 +109,11 @@ void decide() {
 
   if (mineSweeper.leftOpen() > (ROWS*COLUMNS-BOMBS)*0.9) {
     // 空きマス全体のうち9割以上が開いていなければ、指定したマスを開ける。
-    mineSweeper.open(randomR, randomC);
+    mineSweeper.openCell(randomR, randomC);
   } else {
     if (mineSweeper.marked() > ROWS*COLUMNS-mineSweeper.leftOpen()-BOMBS) {
       // 開けた数よりも旗の数が多ければ開ける。
-      mineSweeper.open(randomR, randomC);
+      mineSweeper.openCell(randomR, randomC);
     } else {
       // 旗の数の方が少なければ旗を立てる。
       mineSweeper.mark(randomR, randomC);

@@ -36,8 +36,8 @@ class Drawer {
    * マウスの座標からクリックされたマスを開ける。
    * 開けたマスが、周囲8マスが爆弾なしの場合には、これらも開ける。
    */
-  public void open(int x, int y) {
-    mineSweeper.open(y/cellSize, x/cellSize);
+  public void openCell(int x, int y) {
+    mineSweeper.openCell(y/cellSize, x/cellSize);
   }
 
   /**
@@ -49,7 +49,9 @@ class Drawer {
 
     for (int i=0; i<this.rows; i++) {
       for (int j=0; j<this.columns; j++) {
-        if (mineSweeper.status(i, j) == Status.OPENED) {
+        Status currentStatus = mineSweeper.status(i, j);
+
+        if (currentStatus == Status.OPENED) {
           // 開いているマス
           drawOpenCell(i, j);
           if (mineSweeper.neighbors(i, j) == BombInfo.TRAPPED) {
@@ -59,7 +61,7 @@ class Drawer {
             // 何もないマス
             drawNumber(i, j);
           }
-        } else if (!mineSweeper.isGameOver() && mineSweeper.status(i, j) == Status.MARKED) {
+        } else if (!mineSweeper.isGameOver() && currentStatus == Status.MARKED) {
           // 旗が立っているマス
           drawFlag(i, j);
         } else if (mineSweeper.isGameOver() && mineSweeper.neighbors(i, j) == BombInfo.TRAPPED) {
